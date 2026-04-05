@@ -1,7 +1,7 @@
 import React from "react";
 
 export const metadata = {
-  title: "Flavor | Create",
+  title: "Create",
 };
 
 export default function layout({ children }) {

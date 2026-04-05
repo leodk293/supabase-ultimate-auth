@@ -6,9 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const [meals, setMeals] = useState({
-    error: false,
-    loading: false,
-    data: [],
+    error: false as boolean,
+    loading: false as boolean,
+    data: [] as Array<{ idCategory: string; strCategory: string; strCategoryThumb: string }>,
   });
 
   async function getMealsCategory() {
@@ -31,8 +31,12 @@ export default function Home() {
         loading: false,
         data: result.categories,
       });
-    } catch (error) {
-      console.error(error.message);
+    } catch (error:unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error(error);
+      }
       setMeals({
         error: true,
         loading: false,
@@ -54,14 +58,14 @@ export default function Home() {
         <h1 className=" text-center font-bold text-3xl">
           Discover some amazing dishes
         </h1>
-        <Link href={"/explore"}>Explore user recipes</Link>
+        <Link className=" mt-5 text-lg font-medium" href={"/explore"}>Explore user recipes</Link>
         {meals.error ? (
           <p className=" mt-5 text-red-600 font-medium text-center">
             Something went wrong
           </p>
         ) : meals.loading ? (
           <div className="flex flex-wrap justify-center gap-2">
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 10 }).map((_, i) => (
               <div key={i} className="flex flex-col gap-1.5 sm:gap-2">
                 <Skeleton className="rounded-lg bg-gray-300/30 w-[200px] h-[200px]" />
                 <Skeleton className="h-4 w-[200px] bg-gray-300/30 rounded" />
@@ -71,19 +75,21 @@ export default function Home() {
         ) : (
           <div className=" mt-10 flex flex-wrap justify-center gap-5">
             {meals.data.map((element) => (
-              <div
-                className=" border border-transparent p-2 bg-gray-50 rounded-sm shadow flex flex-col items-center gap-2"
+              <Link
+                href={`/category/${element.strCategory}`}
                 key={element.idCategory}
               >
-                <Image
-                  src={element.strCategoryThumb}
-                  alt={element.strCategory}
-                  width={200}
-                  height={200}
-                  className=" object-cover rounded-sm"
-                />
-                <p>{element.strCategory}</p>
-              </div>
+                <div className=" border border-transparent p-2 bg-gray-50 rounded-sm shadow flex flex-col items-center gap-2">
+                  <Image
+                    src={element.strCategoryThumb}
+                    alt={element.strCategory}
+                    width={200}
+                    height={200}
+                    className=" object-cover rounded-sm"
+                  />
+                  <p>{element.strCategory}</p>
+                </div>
+              </Link>
             ))}
           </div>
         )}
